@@ -7,8 +7,47 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import "~@fortawesome/fontawesome-free/css/all.css";
 
 .navbar-laravel {
-  background-color: #fff;
+  background-color: #9439F6;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.navbar {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0rem 0rem;
+}
+
+a.navbar-brand,
+a#navbarDropdown{
+  color : #fff !important;
+}
+
+li.nav-item.dropdown.show>a{
+  color: #fff !important;
+}
+
+.dropdown-menu.dropdown-menu-right.show>a {
+  color: #333 !important;
+}
+
+li.nav-item>a,li.nav-item>a{
+  color: white !important;
+}
+
+li.nav-item.dropdown>img {
+    width: 30px;
+    height: 30px;
 }

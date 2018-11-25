@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('area');
             $table->string('phone')->nullable();
             $table->string('profile_image')->default('http://via.placeholder.com/150x150');
             $table->rememberToken();

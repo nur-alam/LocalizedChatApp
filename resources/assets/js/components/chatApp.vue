@@ -1,18 +1,19 @@
 <template>
     <div class="chat-app">
-
-        <Conversation :contact="selectedContact" :messages="messages" @sendMsg="saveNewMsg"/>
-
+        <peopleYouMayKnow :user="user"></peopleYouMayKnow>
         <Contactlist :contacts="contacts" @selected="startConversationWith" />
-
+        <Conversation :contact="selectedContact" :messages="messages" @sendMsg="saveNewMsg"/>
     </div>
 </template>
 
 <script>
 
+    import peopleYouMayKnow from './peopleYouMayKnow';
+
     import Conversation from './Conversation';
 
     import Contactlist from './Contactlist';
+
 
     export default {
         name: "chatApp",
@@ -36,23 +37,28 @@
 
             Echo.private(`messages.${this.user.id}`)
                 .listen('NewMessage', (e) => {
-                    //console.log(e);
+                    console.log(e.message);
                     this.handleIncoming(e.message);
                 });
 
             axios.get('/contacts')
                 .then(res => {
                     this.contacts = res.data;
+                    //console.log(res.data);
                 })
                 .catch(err => console.log(err));
-            // setInterval(function () {
-            //     console.log(this.messages);
-            // },3000)
+
+            axios.get('/getPlaces')
+                .then(res => {
+                    //this.contacts = res.data;
+                    console.log(res);
+                })
+                .catch(err => console.log(err));
         },
 
         methods : {
             startConversationWith(contact){
-                console.log(contact);
+                this.updateUnreadCount(contact, true);
                 axios.get(`/conversation/${contact.id}`)
                     .then(res => {
                         //console.log(res.data);
@@ -70,21 +76,36 @@
                 //this.messages.push(msg);
             },
             handleIncoming(message){
-                console.log(message);
+
                 if( this.selectedContact && message.from == this.selectedContact.id ){
                     this.saveNewMsg(message);
                     return;
                 }
-                alert(message.text);
-            }
+                console.log(message);
+                this.updateUnreadCount(message.from_contact, false);
+            },
+            updateUnreadCount(contact, reset){
+                this.contacts = this.contacts.map((single) => {
+                    if(single.id != contact.id){
+                        return single;
+                    }
+                    if(reset)
+                        single.unread = 0;
+                    else
+                        single.unread += 1;
+
+                    return single;
+                })
+            },
         },
 
-        components : {Conversation,Contactlist}
+        components : {peopleYouMayKnow,Conversation,Contactlist}
     }
 </script>
 
 <style scoped>
 .chat-app{
     display: flex;
+    flex-wrap : wrap;
 }
 </style>

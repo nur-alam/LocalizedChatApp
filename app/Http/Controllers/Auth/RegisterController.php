@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use Illuminate\Http\Request;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
+use \Storage;
 class RegisterController extends Controller
 {
     /*
@@ -28,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/chat';
 
     /**
      * Create a new controller instance.
@@ -40,6 +43,33 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
+    public function register(Request $request)
+    {
+        //dd($request->all());exit();
+        $this->validator($request->all())->validate();
+        $file = $request->file('profile_image');
+        $realfilename = $file->getClientOriginalName();
+        $ext = explode(".", $realfilename);
+        $destination = "img/".$ext[0].time().".".end($ext);
+
+        event(new Registered($user = $this->create([
+                    'name'=> $request->name,
+                    'email'=> $request->email,
+                    'password'=> $request->password,
+                    'profile_image'=> $destination,
+                    'area'=> $request->area
+                ])
+            )
+        );
+
+        $uploaded = Storage::put($destination,file_get_contents($file));
+
+        $this->guard()->login($user);
+
+        return $this->registered($request, $user)
+                        ?: redirect($this->redirectPath());
+    }
+
     /**
      * Get a validator for an incoming registration request.
      *
@@ -47,11 +77,15 @@ class RegisterController extends Controller
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
-    {
+    {   
+        $allowed = config('app.allowed');
+        $maxfilesize = config('app.file_size');
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'profile_image' => "required|mimes:{$allowed}|max:{$maxfilesize}",
+            'area'=> "required"
         ]);
     }
 
@@ -67,6 +101,8 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'profile_image' => $data['profile_image'],
+            'area'=> $data['area']
         ]);
     }
 }

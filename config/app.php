@@ -1,7 +1,9 @@
 <?php
 
 return [
-
+    'destination' => 'img/',
+    'allowed' => 'jpg,jpeg,png',
+    'file_size' => '1000',
     /*
     |--------------------------------------------------------------------------
     | Application Name

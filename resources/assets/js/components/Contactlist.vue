@@ -2,10 +2,10 @@
     <div class="contacts-list">
         <ul>
             <li
-                    v-for="(contact,index) in contacts"
-                    @click="selectContact(index, contact)"
+                    v-for="contact in sortedContacts"
+                    @click="selectContact(contact)"
                     :key="contact.id"
-                    :class="{ 'selected' : index == selected }"
+                    :class="{ 'selected' : contact == selected }"
             >
                 <div class="avatar">
                     <img :src="contact.profile_image" :alt="contact.name">
@@ -14,6 +14,7 @@
                     <p class="name">{{ contact.name }}</p>
                     <p class="email">{{ contact.email }}</p>
                 </div>
+                <span class="unread" v-if="contact.unread">{{ contact.unread }}</span>
             </li>
         </ul>
     </div>
@@ -32,16 +33,29 @@
 
         data(){
           return {
-              selected : 0
+              selected : null
           };
         },
 
         methods:{
-            selectContact(index, contact){
+            selectContact(contact){
                 //console.log(index);
                 //console.log(contact);
-                this.selected = index;
+                this.selected = contact;
                 this.$emit('selected',contact);
+            }
+        },
+
+        computed: {
+            sortedContacts() {
+                return _.sortBy(this.contacts, [(contact) => {
+
+                    if(contact == this.selected) {
+                        return Infinity;
+                    }
+
+                    return contact.unread;
+                }]).reverse();
             }
         }
 
@@ -50,8 +64,8 @@
 
 <style lang="scss" scoped>
     .contacts-list {
-        flex: 2;
-        max-height: 600px;
+        flex: 3;
+        max-height: 500px;
         overflow: scroll;
         border-left: 1px solid #a6a6a6;
 
@@ -66,7 +80,25 @@
                 position: relative;
                 cursor: pointer;
                 &.selected {
-                    background: #dfdfdf;
+                    background: #9439f6;
+                    color: #fff;
+                }
+
+                span.unread {
+                    background: #82e0a8;
+                    color: #fff;
+                    position: absolute;
+                    right: 11px;
+                    top: 13px;
+                    display: flex;
+                    font-weight: 700;
+                    min-width: 20px;
+                    justify-content: center;
+                    align-items: center;
+                    line-height: 20px;
+                    font-size: 12px;
+                    padding: 0 4px;
+                    border-radius: 3px;
                 }
 
                 .avatar {
@@ -74,8 +106,9 @@
                     display: flex;
                     align-items: center;
                     img {
-                        width: 35px;
-                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 8%;
                         margin: 0 auto;
                     }
                 }

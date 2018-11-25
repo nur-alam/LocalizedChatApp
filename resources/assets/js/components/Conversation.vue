@@ -48,7 +48,7 @@
 
 <style lang="scss" scoped>
     .conversation {
-        flex: 5;
+        flex: 3;
         display: flex;
         flex-direction: column;
         justify-content: space-between;

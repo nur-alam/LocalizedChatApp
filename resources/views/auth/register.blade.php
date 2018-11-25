@@ -8,7 +8,14 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}" aria-label="{{ __('Register') }}">
+                    @if(count($errors))
+                        <div class="alert alert-danger">
+                            @foreach($errors->all() as $error)
+                                  <li>{{ $error }}</li>
+                            @endforeach
+                        </div>
+                    @endif
+                    <form method="POST" action="{{ route('register') }}" aria-label="{{ __('Register') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group row">
@@ -58,6 +65,32 @@
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="profile_image" class="col-md-4 col-form-label text-md-right">Profile pic</label>
+
+                            <div class="col-md-6">
+                                <input name="profile_image" id="profile_image" type="file" class="form-control"  required>
+                                @if ($errors->has('profile_image'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('profile_image') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="area" class="col-md-4 col-form-label text-md-right">Your Location</label>
+
+                            <div class="col-md-6">
+                                <places></places>
+                                @if ($errors->has('area'))
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $errors->first('area') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 

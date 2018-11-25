@@ -5,9 +5,6 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-
-                    <div class="card-header">Localized ChatApp</div>
-
                     <div class="card-body" id="app">
                         @if (session('status'))
                             <div class="alert alert-success" role="alert">
