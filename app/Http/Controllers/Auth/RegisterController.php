@@ -31,7 +31,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/chat';
+    protected $redirectTo = '/login';
 
     /**
      * Create a new controller instance.

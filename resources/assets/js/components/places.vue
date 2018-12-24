@@ -2,6 +2,7 @@
     <div>
         <vue-single-select
                 v-model="area"
+                placeholder="Search places here"
                 :options="places"
                 :required="true"
                 :max-results="4"

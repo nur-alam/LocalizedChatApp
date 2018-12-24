@@ -2,7 +2,8 @@
     <div class="chat-app">
         <peopleYouMayKnow :user="user"></peopleYouMayKnow>
         <Contactlist :contacts="contacts" @selected="startConversationWith" />
-        <Conversation :contact="selectedContact" :messages="messages" @sendMsg="saveNewMsg"/>
+        <Conversation :user="user" :contact="selectedContact" :messages="messages" @sendMsg="saveNewMsg"/>    
+        
     </div>
 </template>
 
@@ -37,7 +38,7 @@
 
             Echo.private(`messages.${this.user.id}`)
                 .listen('NewMessage', (e) => {
-                    console.log(e.message);
+                    //console.log(e.message);
                     this.handleIncoming(e.message);
                 });
 
@@ -48,12 +49,6 @@
                 })
                 .catch(err => console.log(err));
 
-            axios.get('/getPlaces')
-                .then(res => {
-                    //this.contacts = res.data;
-                    console.log(res);
-                })
-                .catch(err => console.log(err));
         },
 
         methods : {

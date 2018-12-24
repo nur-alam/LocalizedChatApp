@@ -26,6 +26,9 @@
             contact : {
                 type : Object
             },
+            user : {
+                type : Object
+            },
             messages : {
                 type : Array,
                 required : true
@@ -102,6 +105,8 @@
                             padding: 0px;
                             margin: 0px 0px 0px 39px;
                             color: #46462f;
+                            background: #fff;
+                            z-index: 99999;
                         }
                     }
                     &.received {

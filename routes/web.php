@@ -27,5 +27,7 @@ Route::get('/localizedusers',['as'=>'localizedusers','uses'=>'ContactCnt@localiz
 
 Route::get('/chat', 'HomeController@index')->name('chat');
 
+Route::post('/changelocation',['as'=>'changelocation','uses'=>'ContactCnt@changelocation']);
+
 Auth::routes();
 

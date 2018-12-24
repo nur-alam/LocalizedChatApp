@@ -14,21 +14,23 @@ class ContactCnt extends Controller
 
     public function get(){
 
-        $contacts = User::where('id', '!=', auth()->id())->get();
+            $contacts = User::where('id','!=',auth()->id())
+              ->where('area','=',Auth::user()->area)
+              ->get();
 
-        $unreadIdsWithMsgCount = Message::select(DB::raw('`from` as sender_id, count(`from`) as message_count'))
-                    ->where('to', auth()->id())
-                    ->where('read', false)
-                    ->groupBy('from')
-                    ->get();
+            $unreadIdsWithMsgCount = Message::select(DB::raw('`from` as sender_id, count(`from`) as message_count'))
+                        ->where('to', auth()->id())
+                        ->where('read', false)
+                        ->groupBy('from')
+                        ->get();
 
-        $contacts = $contacts->map(function ($contact) use ($unreadIdsWithMsgCount){
-            $unreadContact = $unreadIdsWithMsgCount->where('sender_id', $contact->id)->first();
-            $contact->unread = $unreadContact ? $unreadContact->message_count : 0;
-            return $contact;
-        });
+            $contacts = $contacts->map(function ($contact) use ($unreadIdsWithMsgCount){
+                $unreadContact = $unreadIdsWithMsgCount->where('sender_id', $contact->id)->first();
+                $contact->unread = $unreadContact ? $unreadContact->message_count : 0;
+                return $contact;
+            });
 
-        return response()->json($contacts);
+            return response()->json($contacts);
 
     }
 
@@ -81,7 +83,7 @@ class ContactCnt extends Controller
     public function localizedusers()
     {
         $area = Auth::user()->area;
-        $localizedUsers = User::where('area',$area)->where('id',Auth::user()->id)->get();
+        $localizedUsers = User::where('area',$area)->where('id','!=',Auth::user()->id)->get();
         return response()->json($localizedUsers);
     }
 
@@ -90,6 +92,17 @@ class ContactCnt extends Controller
         $loc = base_path().'/places.json';
         $data = file_get_contents($loc);
         return response()->json($data);
+    }
+
+    public function changelocation(Request $request)
+    {
+        $user = Auth::user()->name;
+
+        DB::table('users')
+            ->where('id','=',Auth::user()->id)
+            ->update(['area'=>$request->area]);
+
+        return response()->json($request->area);
     }
 
 

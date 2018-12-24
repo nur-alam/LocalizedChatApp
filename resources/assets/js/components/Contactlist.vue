@@ -49,11 +49,9 @@
         computed: {
             sortedContacts() {
                 return _.sortBy(this.contacts, [(contact) => {
-
                     if(contact == this.selected) {
                         return Infinity;
                     }
-
                     return contact.unread;
                 }]).reverse();
             }
